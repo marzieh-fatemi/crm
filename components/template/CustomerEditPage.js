@@ -2,6 +2,9 @@ import { useState } from "react";
 import Form from "../module/form";
 import { useRouter } from "next/router";
 import moment from "moment/moment";
+import Snackbar from "@mui/material/Snackbar";
+import { Alert } from "@mui/material";
+
 
 function CustomerEditPage({ data, id }) {
     const date=data.date ? moment(data.date).utc().format("YYYY-MM-DD") : "";
@@ -15,6 +18,14 @@ function CustomerEditPage({ data, id }) {
     products: data.products || "",
     date: date || "",
   });
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [severity, setSeverity] = useState("");
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
 
   const router = useRouter();
 
@@ -31,6 +42,9 @@ function CustomerEditPage({ data, id }) {
 
     const data = await res.json();
     if (data.status === "success") {
+      setOpen(true);
+      setMessage("اطلاعات با موفقیت به روز رسانی شد.");
+      setSeverity("success");
       router.push("/");
     }
   };
@@ -46,6 +60,11 @@ function CustomerEditPage({ data, id }) {
           Edit
         </button>
       </div>
+      <Snackbar open={open} autoHideDuration={600000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={severity} sx={{ width: "100%" }}>
+          {message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
